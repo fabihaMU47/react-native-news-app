@@ -1,58 +1,61 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { View, Text, StyleSheet } from 'react-native';
-import { Divider, NativeBaseProvider } from 'native-base';
+import { Divider, NativeBaseProvider,
+  FlatList, ScrollView, Image} from 'native-base';
+import { services } from '../services/services';
+import moment from 'moment';
 
 export default function TechScreen(){
+    const [newsData, setNewsData] = useState([])
+    useEffect(()=> {
+        services('technology')
+        .then(data => {
+            setNewsData(data)
+        })
+        .catch(error => {
+            alert(error)
+        })
+    },[])
     return (
         <NativeBaseProvider>
         <View>
             <View style={styles.container}>
                 <Text style={styles.text}>Tech</Text>
             </View>
-            <View>
-                <View style={styles.flex}>
-                    <Text style={styles.title}>Title</Text>
-                    <Text style={styles.date}>Date</Text>
-                </View>
+            <ScrollView
+                     height={600}
+                    >
 
-                <View style={styles.description}>
-                    <Text style={styles.title}>Description</Text>
-                </View>
-            </View>
-            <Divider my="2" bg="#bdbdbd"/>
-            <View>
-                <View style={styles.flex}>
-                    <Text style={styles.title}>Title</Text>
-                    <Text style={styles.date}>Date</Text>
-                </View>
-
-                <View style={styles.description}>
-                    <Text style={styles.title}>Description</Text>
-                </View>
-            </View>
-            <Divider my="2" bg="#bdbdbd"/>
-            <View>
-                <View style={styles.flex}>
-                    <Text style={styles.title}>Title</Text>
-                    <Text style={styles.date}>Date</Text>
-                </View>
-
-                <View style={styles.description}>
-                    <Text style={styles.title}>Description</Text>
-                </View>
-            </View>
-            <Divider my="2" bg="#bdbdbd"/>
-            <View>
-                <View style={styles.flex}>
-                    <Text style={styles.title}>Title</Text>
-                    <Text style={styles.date}>Date</Text>
-                </View>
-
-                <View style={styles.description}>
-                    <Text style={styles.title}>Description</Text>
-                </View>
-            </View>
-            <Divider my="2" bg="#bdbdbd"/>
+                    <FlatList
+                        data={newsData}
+                        renderItem={({ item }) => (
+                            <View>
+                                <View style={styles.newsContainer}>
+                                    <Image
+                                        width= {550}
+                                        height = {250}
+                                        resizeMode={"cover"}
+                                        source={{
+                                            uri: item.urlToImage ? item.urlToImage: "https://wallpaperaccess.com/full/317501.jpg",
+                                        }}
+                                        alt="Alternate Text"
+                                    />
+                                    <Text style={styles.title}>
+                                        {item.title}
+                                    </Text>
+                                    <Text style={styles.date}>
+                                        {moment(item.publishedAt).format("LLL")}
+                                    </Text>
+                                    <Text style={styles.newsDescription}>
+                                        {item.description}
+                                    </Text>
+                                </View>
+                                <Divider my="2" bg="#e0e0e0"/>
+                            </View>
+                        )}
+                        keyExtractor={(item) => item.id}
+                    />
+                </ScrollView>
         </View>
         </NativeBaseProvider>
     )
@@ -75,12 +78,22 @@ const  styles = StyleSheet.create ({
         padding: 20,
     },
     title: {
-        fontSize: 20
+        fontSize: 18,
+        marginTop: 10,
+        fontWeight: 600
+    },
+    newsDescription: {
+        fontSize: 16,
+        marginTop: 10
     },
     date: {
-        fontSize: 20
+        fontSize: 14
     },
     description: {
         padding: 20
     },
+    newsContainer: {
+        padding: 10
+    }
+
 });
