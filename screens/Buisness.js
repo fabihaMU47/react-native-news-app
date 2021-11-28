@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { View, Text, StyleSheet} from 'react-native';
 import { Divider, NativeBaseProvider,
-  FlatList, ScrollView, Image} from 'native-base';
+  FlatList, ScrollView, Image, Spinner, HStack, Heading} from 'native-base';
 import { services } from '../services/services';
 import moment from 'moment';
 
@@ -26,7 +26,7 @@ export default function Settings(){
                      height={600}
                     >
 
-                    <FlatList
+                    {newsData.length > 1 ? (<FlatList
                         data={newsData}
                         renderItem={({ item }) => (
                             <View>
@@ -55,6 +55,16 @@ export default function Settings(){
                         )}
                         keyExtractor={(item) => item.id}
                     />
+                    ) : (
+                        <View style={styles.spinner}>
+                            <HStack space={2} alignItems="center">
+                                <Spinner accessibilityLabel="Loading posts" />
+                                <Heading color="primary.500" fontSize="md">
+                                    Loading
+                                </Heading>
+                            </HStack> 
+                        </View>
+                    )}
                 </ScrollView>
         </View>
         </NativeBaseProvider>
@@ -70,12 +80,6 @@ const  styles = StyleSheet.create ({
     },
     text: {
         fontSize: 24
-    },
-    flex: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 20,
     },
     title: {
         fontSize: 18,
@@ -94,6 +98,12 @@ const  styles = StyleSheet.create ({
     },
     newsContainer: {
         padding: 10
+    },
+    spinner: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 600
     }
 
 });
